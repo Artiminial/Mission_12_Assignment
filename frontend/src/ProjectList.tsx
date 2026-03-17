@@ -18,16 +18,18 @@ useEffect(() => {
         <><h1> Water Projects</h1>
         <br/>
         {projects.map((p) =>
-        <div id="projectCard">
-            <h3>{p.projectName}</h3>
-
-            <ul>
-                <li>Project Type: {p.projectType}</li>
-                <li>RegionalProgram: {p.projectRegionalProgram}</li>
-                <li>Impact: {p.projectImpact} Individuals Served</li>
-                <li>Project Phase: {p.projectPhase}</li>
-                <li>Project Status: {p.projectFunctionalityStatus}</li>
-            </ul>
+        <div id="projectCard" className="card" key={p.projectID}>
+            <h3 className="card-title">{p.projectName}</h3>
+                <div className="card-body">
+                   <ul className="list-unstyled">
+                <li><strong>Project Type:</strong> {p.projectType}</li>
+                <li><strong>RegionalProgram</strong>: {p.projectRegionalProgram}</li>
+                <li><strong>Impact:</strong> {p.projectImpact} Individuals Served</li>
+                <li><strong>Project Phase: </strong> {p.projectPhase}</li>
+                <li><strong>Project Status: </strong> {p.projectFunctionalityStatus}</li>
+                    </ul> 
+                </div>
+            
         </div>
         
         )}
