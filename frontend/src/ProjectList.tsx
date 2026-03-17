@@ -4,10 +4,11 @@ import type { Project } from './types/Project';
 function ProjectList(){
 
 const[projects, setProjects] = useState<Project[]>([]);
+const [pageSize, setPageSize] = useState<number>(10);
 
 useEffect(() => {
     const fetchProjects = async() => {
-        const response = await fetch('https://localhost:5000/api/water/AllProjects');
+        const response = await fetch(`https://localhost:5000/api/water/AllProjects?pageHowMany=${pageSaize}`);
         const data = await response.json();
         setProjects(data);
     }
@@ -33,6 +34,15 @@ useEffect(() => {
         </div>
         
         )}
+        <br></br>
+        <label>
+            Results per page:
+            <select value={pageSize} onChange={(p) => setPageSize(Number(p.target.value))}>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </label>
         </>
     );
 }

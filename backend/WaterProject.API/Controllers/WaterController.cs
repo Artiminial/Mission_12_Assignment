@@ -18,7 +18,9 @@ namespace WaterProject.API.Controllers
         [HttpGet("AllProjects")]
         public IEnumerable<Project> GetProjects()
         { 
-            var something = _waterContext.Projects.ToList();
+            var something = _waterContext.Projects
+                .Take(5)
+                .ToList();
             return something;
         }
 
