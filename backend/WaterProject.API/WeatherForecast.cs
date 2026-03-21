@@ -1,4 +1,4 @@
-namespace WaterProject.API;
+namespace BookProject.API;
 
 public class WeatherForecast
 {

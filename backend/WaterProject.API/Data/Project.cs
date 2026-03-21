@@ -1,25 +1,34 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace WaterProject.API.Data
+namespace BookProject.API.Data
 {
-    public class Project
+    public class Book
     {
         [Key]
-        public int ProjectId { get; set; }
+        public int BookID { get; set; }
 
         [Required]
-        public string ProjectName { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string? ProjectType { get; set; }
+        [Required]
+        public string Author { get; set; } = string.Empty;
 
-        public string? ProjectRegionalProgram { get; set; }
+        [Required]
+        public string Publisher { get; set; } = string.Empty;
 
-        public int? ProjectImpact { get; set; }
+        [Required]
+        public string ISBN { get; set; } = string.Empty;
 
-        public string? ProjectPhase { get; set; }
+        [Required]
+        public string Classification { get; set; } = string.Empty;
 
-        public string? ProjectFunctionalityStatus { get; set; }
+        [Required]
+        public string Category { get; set; } = string.Empty;
 
+        [Required]
+        public int PageCount { get; set; }
 
+        [Required]
+        public double Price { get; set; }
     }
 }

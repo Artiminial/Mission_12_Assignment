@@ -1,46 +1,63 @@
 import {useState, useEffect} from "react";
-import type { Project } from './types/Project';
+import type { Book } from './types/Project';
 
 function ProjectList(){
 
-const[projects, setProjects] = useState<Project[]>([]);
-const [pageSize, setPageSize] = useState<number>(10);
+const[books, setBooks] = useState<Book[]>([]);
+const [pageSize, setPageSize] = useState<number>(5);
 const [pageNum, setPageNum] = useState<number>(1);
 const [totalItems, setTotalItems] = useState<number>(0);
 const [totalPages, setTotalPages] = useState<number>(0);
+const [sortOrder, setSortOrder] = useState<string>("asc");
 
 useEffect(() => {
-    const fetchProjects = async() => {
-        const response = await fetch(`https://localhost:5000/api/water/AllProjects?pageHowMany=${pageSize}&pageNum=${pageNum}`);
+    const fetchBooks = async() => {
+        const response = await fetch(`https://localhost:5000/api/book/Books?pageHowMany=${pageSize}&pageNum=${pageNum}&sortOrder=${sortOrder}`);
         const data = await response.json();
-        setProjects(data.projects);
-        setTotalItems(data.totalNumProjects);
-        setTotalPages(Math.ceil(totalItems / pageSize));
+        setBooks(data.books);
+        setTotalItems(data.totalNumBooks);
+        setTotalPages(Math.ceil(data.totalNumBooks / pageSize));
     };
 
 
-    fetchProjects()
-}, [pageSize, pageNum, totalItems]);
+    fetchBooks()
+}, [pageSize, pageNum, sortOrder]);
 
     return(
-        <><h1> Water Projects</h1>
+        <><h1> Bookstore Catalog</h1>
         <br/>
-        {projects.map((p) =>
-        <div id="projectCard" className="card" key={p.projectID}>
-            <h3 className="card-title">{p.projectName}</h3>
+        {books.map((b) =>
+        <div id="projectCard" className="card mb-3" key={b.bookID}>
+            <h3 className="card-title">{b.title}</h3>
                 <div className="card-body">
                    <ul className="list-unstyled">
-                <li><strong>Project Type:</strong> {p.projectType}</li>
-                <li><strong>RegionalProgram</strong>: {p.projectRegionalProgram}</li>
-                <li><strong>Impact:</strong> {p.projectImpact} Individuals Served</li>
-                <li><strong>Project Phase: </strong> {p.projectPhase}</li>
-                <li><strong>Project Status: </strong> {p.projectFunctionalityStatus}</li>
+                <li><strong>Author:</strong> {b.author}</li>
+                <li><strong>Publisher:</strong> {b.publisher}</li>
+                <li><strong>ISBN:</strong> {b.isbn}</li>
+                <li><strong>Classification:</strong> {b.classification}</li>
+                <li><strong>Category:</strong> {b.category}</li>
+                <li><strong>Pages:</strong> {b.pageCount}</li>
+                <li><strong>Price:</strong> ${b.price.toFixed(2)}</li>
                     </ul> 
                 </div>
             
         </div>
         
         )}
+
+         <div className="mb-3">
+            <label>
+                Sort by title:
+                <select value={sortOrder}
+                onChange={(s) => {
+                    setSortOrder(s.target.value);
+                    setPageNum(1);
+                }}>
+                    <option value="asc">A to Z</option>
+                    <option value="desc">Z to A</option>
+                </select>
+            </label>
+         </div>
 
          <button  disabled={pageNum === 1} onClick={() =>setPageNum(pageNum - 1)}>Previous</button> 
          
@@ -62,6 +79,7 @@ useEffect(() => {
                 <option value="20">20</option>
             </select>
         </label>
+        <p>Total books: {totalItems}</p>
         </>
     );
 }

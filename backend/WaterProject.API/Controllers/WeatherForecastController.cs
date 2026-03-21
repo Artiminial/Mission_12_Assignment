@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WaterProject.API.Controllers;
+namespace BookProject.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
