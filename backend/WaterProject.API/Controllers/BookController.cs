@@ -15,25 +15,20 @@ namespace BookProject.API.Controllers
         }
 
         [HttpGet("Books")]
-        public IActionResult GetBooks(int pageHowMany = 5, int pageNum = 1, string sortOrder = "asc")
+        public IActionResult GetBooks(int pageHowMany = 5, int pageNum = 1, [FromQuery] List<string>? bookTypes = null)
         {
-            var booksQuery = _bookContext.Books.AsQueryable();
+            IQueryable<Book> query = _bookContext.Books.AsQueryable();
 
-            if (sortOrder.ToLower() == "desc")
+            if (bookTypes != null && bookTypes.Any())
             {
-                booksQuery = booksQuery.OrderByDescending(b => b.Title);
+                query = query.Where(p => bookTypes.Contains(p.Category));
             }
-            else
-            {
-                booksQuery = booksQuery.OrderBy(b => b.Title);
-            }
+            var totalNumBooks = query.Count();
 
-            var books = booksQuery
+            var books = query
                 .Skip((pageNum - 1) * pageHowMany)
                 .Take(pageHowMany)
                 .ToList();
-
-            var totalNumBooks = _bookContext.Books.Count();
 
             var response = new
             {
@@ -42,6 +37,16 @@ namespace BookProject.API.Controllers
             };
 
             return Ok(response);
+        }
+        [HttpGet("GetBookTypes")]
+        public IActionResult GetBookTypes()
+        {
+            var bookTypes = _bookContext.Books
+                .Select(p => p.Category)
+                .Distinct()
+                .ToList();
+
+            return Ok(bookTypes);
         }
     }
 }

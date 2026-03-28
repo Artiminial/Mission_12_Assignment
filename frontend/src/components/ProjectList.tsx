@@ -1,18 +1,31 @@
 import {useState, useEffect} from "react";
-import type { Book } from './types/Project';
+import type { Book } from '../types/Project';
+import { useNavigate } from "react-router-dom";
 
-function ProjectList(){
-
+function ProjectList({
+    selectedCategories,
+    pageNum,
+    pageSize,
+    setPageNum,
+    setPageSize,
+}: {
+    selectedCategories: string[];
+    pageNum: number;
+    pageSize: number;
+    setPageNum: (value: number) => void;
+    setPageSize: (value: number) => void;
+}){
 const[books, setBooks] = useState<Book[]>([]);
-const [pageSize, setPageSize] = useState<number>(5);
-const [pageNum, setPageNum] = useState<number>(1);
 const [totalItems, setTotalItems] = useState<number>(0);
 const [totalPages, setTotalPages] = useState<number>(0);
-const [sortOrder, setSortOrder] = useState<string>("asc");
+const navigate = useNavigate();
+
 
 useEffect(() => {
     const fetchBooks = async() => {
-        const response = await fetch(`https://localhost:5000/api/book/Books?pageHowMany=${pageSize}&pageNum=${pageNum}&sortOrder=${sortOrder}`);
+
+        const categoryParams = selectedCategories.map((cat) => `bookTypes=${encodeURIComponent(cat)}`).join('&')
+        const response = await fetch(`https://localhost:5000/api/book/Books?pageHowMany=${pageSize}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}`);
         const data = await response.json();
         setBooks(data.books);
         setTotalItems(data.totalNumBooks);
@@ -21,11 +34,10 @@ useEffect(() => {
 
 
     fetchBooks()
-}, [pageSize, pageNum, sortOrder]);
+}, [pageSize, pageNum, selectedCategories]);
 
     return(
-        <><h1> Bookstore Catalog</h1>
-        <br/>
+        <>
         {books.map((b) =>
         <div id="projectCard" className="card mb-3" key={b.bookID}>
             <h3 className="card-title">{b.title}</h3>
@@ -39,25 +51,29 @@ useEffect(() => {
                 <li><strong>Pages:</strong> {b.pageCount}</li>
                 <li><strong>Price:</strong> ${b.price.toFixed(2)}</li>
                     </ul> 
+
+                <button
+                    className='btn btn-success'
+                    onClick={() =>
+                        navigate(`/purchase/${b.title}/${b.bookID}`, {
+                            // Pass browse state so cart can return users to this catalog state.
+                            state: {
+                                returnTo: {
+                                    path: "/",
+                                    browseState: { selectedCategories, pageNum, pageSize },
+                                },
+                                unitPrice: b.price,
+                            },
+                        })
+                    }
+                >
+                    Purchase
+                </button>
                 </div>
             
         </div>
         
         )}
-
-         <div className="mb-3">
-            <label>
-                Sort by title:
-                <select value={sortOrder}
-                onChange={(s) => {
-                    setSortOrder(s.target.value);
-                    setPageNum(1);
-                }}>
-                    <option value="asc">A to Z</option>
-                    <option value="desc">Z to A</option>
-                </select>
-            </label>
-         </div>
 
          <button  disabled={pageNum === 1} onClick={() =>setPageNum(pageNum - 1)}>Previous</button> 
          
